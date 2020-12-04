@@ -1,0 +1,14 @@
+{
+  "name": "fooddist",
+  "version": "1.0.0",
+  "description": "Learning project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "baybako",
+  "license": "ISC",
+  "dependencies": {
+    "json-server": "^0.16.3"
+  }
+}
