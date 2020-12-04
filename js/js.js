@@ -211,16 +211,28 @@ window.addEventListener('DOMContentLoaded', () => {
         message = {
             loading: '/icons/spinner.svg',
             success: 'Спасибо! Скоро мы с вами свяжемся',
-            failure: 'Что-то пошло по пязде...',
+            failure: 'Что-то пошло не так...',
         };
 
 
     formAll.forEach(e => {
-        postData(e);
+        bindPostData(e);
     });
 
+    const postData = async (url, data) => {
+        const res = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-type': 'application/json',
+            },
+            body: data,
+        });
 
-    function postData(form) {
+        return await res.json();
+    };
+
+
+    function bindPostData(form) {
 
 
         form.addEventListener('submit', (ev) => {
@@ -243,13 +255,8 @@ window.addEventListener('DOMContentLoaded', () => {
                 obj[key] = el;
             });
 
-            fetch('../server/server.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-type': 'application/json',
-                    },
-                    body: JSON.stringify(obj),
-                })
+
+            postData('http://localhost:3000/requests', JSON.stringify(obj))
                 .then(data => data.text())
                 .then(data => {
                     console.log(data);
@@ -299,4 +306,9 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 
 
+    
+
+    // function changeToUAH(price) {
+    //     return (price*28.29).toFixed(0);
+    // }
 });
