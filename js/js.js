@@ -318,43 +318,76 @@ window.addEventListener('DOMContentLoaded', () => {
 
     // slider
 
-    const slideImg = document.querySelectorAll('.offer__slide'),
+
+    const slideImgs = document.querySelectorAll('.offer__slide'),
         slideBtnPrev = document.querySelector('.offer__slider-prev'),
-        slideBtnNext = document.querySelector('.offer__slider-next');
+        slideBtnNext = document.querySelector('.offer__slider-next'),
+        slidesWrapper = document.querySelector('.offer__slider-wrapper'),
+        slidesField = document.querySelector('.offer__slider-inner'),
+        width = window.getComputedStyle(slidesWrapper).width,
+        total = document.querySelector('#total');
 
-    let currentSlideIndex = 0,
-        currentSlideImg = slideImg[currentSlideIndex];
+    total.textContent = getZero(slideImgs.length);
 
-    slideBtnPrev.addEventListener('click', () => {
-        currentSlideIndex = (currentSlideIndex <= 0) ? slideImg.length - 1 : --currentSlideIndex;
+    let currentSlideIndex = 1;
+    let offset = 0;
+    let current = document.querySelector('#current');
+    current.textContent = getZero(currentSlideIndex);
 
-        currentSlideImg = slideImg[currentSlideIndex];
 
-        hideSlides(slideImg, currentSlideImg);
+    slidesField.style.width= 100 * slideImgs.length + '%';
+    slidesField.style.display = 'flex';
+    slidesField.style.transition = '0.5s';
+
+    slidesWrapper.style.overflow = 'hidden';
+
+    slideImgs.forEach(slide =>{
+        slide.style.width = width;
+    });
+
+    slideBtnNext.addEventListener('click',()=>{
+
+        if (offset == +width.slice(0,width.length-2) * (slideImgs.length - 1)) {
+            offset = 0;
+
+            currentSlideIndex = 1;
+
+            current.textContent = getZero(currentSlideIndex);
+
+        } else {
+            ++currentSlideIndex;
+            
+            current.textContent = getZero(currentSlideIndex);
+
+            offset += +width.slice(0,width.length-2);
+        }
+
+        slidesField.style.transform = `translateX(-${offset}px)`;
 
     });
 
-    slideBtnNext.addEventListener('click', () => {
-        currentSlideIndex = (currentSlideIndex >= slideImg.length - 1) ? 0 : ++currentSlideIndex;
+    slideBtnPrev.addEventListener('click',()=>{
 
-        currentSlideImg = slideImg[currentSlideIndex];
+        if (offset == 0) {
+            
+            offset = +width.slice(0,width.length-2) * (slideImgs.length - 1);
+        
+            currentSlideIndex = slideImgs.length;
 
-        hideSlides(slideImg, currentSlideImg);
+            current.textContent = getZero(currentSlideIndex);
+
+        } else {
+            --currentSlideIndex;
+
+            current.textContent = getZero(currentSlideIndex);
+
+            offset -= +width.slice(0,width.length-2);
+        }
+
+        slidesField.style.transform = `translateX(-${offset}px)`;
 
     });
 
-
-
-    hideSlides(slideImg, currentSlideImg);
-
-    function hideSlides(slides, current) {
-
-        slides.forEach(el => {
-            el.classList.add('hide');
-        });
-
-        current.classList.remove('hide');
-    }
 
     function changeToUA(price) {
         return Math.floor(price * 28.19);
