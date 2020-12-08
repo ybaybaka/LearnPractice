@@ -119,7 +119,8 @@ window.addEventListener('DOMContentLoaded', () => {
 
 
     modal.addEventListener('click', ev => {
-        if (ev.target.classList.contains('modal') || ev.target.getAttribute('data-close') == '') { // ev.target === modal is better
+        if (ev.target.classList.contains('modal') || ev.target.getAttribute('data-close') == '') { 
+            // ev.target === modal is better
             closeModal();
         }
     });
@@ -191,18 +192,27 @@ window.addEventListener('DOMContentLoaded', () => {
 
     }
 
-    const MenuItemText = {
-        t1: 'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!',
-        t2: 'В меню “Премиум” мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!',
-        t3: 'Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков.',
-    };
+    // menu 
+
+    fetch('http://localhost:3000/menu')
+        .then(data => data.json())
+        .then(data => {
+
+            for (let i = 0; i < data.length; i++) {
+                const {
+                    img,
+                    altimg,
+                    title,
+                    descr,
+                    price
+                } = data[i];
+
+                new MenuItem(img, altimg, title, descr, changeToUA(price), '.menu__field .container').render();
+            }
+
+        });
 
 
-    new MenuItem("img/tabs/vegy.jpg", 'vegy', 'Меню "Фитнес"', MenuItemText.t1, 229, '.menu__field .container').render();
-
-    new MenuItem("img/tabs/elite.jpg", "elite", 'Меню “Премиум”', MenuItemText.t2, 550, '.menu__field .container').render();
-
-    new MenuItem("img/tabs/post.jpg", "post", 'Меню "Постное"', MenuItemText.t3, 430, '.menu__field .container').render();
 
     //form
 
@@ -306,9 +316,49 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 
 
-    
+    // slider
 
-    // function changeToUAH(price) {
-    //     return (price*28.29).toFixed(0);
-    // }
+    const slideImg = document.querySelectorAll('.offer__slide'),
+        slideBtnPrev = document.querySelector('.offer__slider-prev'),
+        slideBtnNext = document.querySelector('.offer__slider-next');
+
+    let currentSlideIndex = 0,
+        currentSlideImg = slideImg[currentSlideIndex];
+
+    slideBtnPrev.addEventListener('click', () => {
+        currentSlideIndex = (currentSlideIndex <= 0) ? slideImg.length - 1 : --currentSlideIndex;
+
+        currentSlideImg = slideImg[currentSlideIndex];
+
+        hideSlides(slideImg, currentSlideImg);
+
+    });
+
+    slideBtnNext.addEventListener('click', () => {
+        currentSlideIndex = (currentSlideIndex >= slideImg.length - 1) ? 0 : ++currentSlideIndex;
+
+        currentSlideImg = slideImg[currentSlideIndex];
+
+        hideSlides(slideImg, currentSlideImg);
+
+    });
+
+
+
+    hideSlides(slideImg, currentSlideImg);
+
+    function hideSlides(slides, current) {
+
+        slides.forEach(el => {
+            el.classList.add('hide');
+        });
+
+        current.classList.remove('hide');
+    }
+
+    function changeToUA(price) {
+        return Math.floor(price * 28.19);
+    }
+
+
 });
